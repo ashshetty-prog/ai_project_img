@@ -10,10 +10,28 @@
 import os
 import zipfile
 
-import ai_utils
+import numpy as np
+
+import p3_utils
 
 
 # Module Classes
+
+
+class DigitData:
+    """
+    All the image variables are lists of Datums.
+    All the labels are just lists of final labels
+    """
+    def __init__(self, digit_data_path):
+        self.digit_path = digit_data_path
+        self.digit_train_imgs = load_all_data_in_file(os.path.join(digit_data_path, "trainingimages"), 28, 28)
+        self.digit_validation_imgs = load_all_data_in_file(os.path.join(digit_data_path, "validationimages"), 28, 28)
+        self.digit_test_imgs = load_all_data_in_file(os.path.join(digit_data_path, "testimages"), 28, 28)
+        self.digit_train_labels = load_all_labels_in_file(os.path.join(digit_data_path, "traininglabels"))
+        self.digit_validation_labels = load_all_labels_in_file(os.path.join(digit_data_path, "validationlabels"))
+        self.digit_test_labels = load_all_labels_in_file(os.path.join(digit_data_path, "testlabels"))
+
 
 class Datum:
     """
@@ -60,7 +78,7 @@ class Datum:
         self.width = width
         if data is None:
             data = [[' ' for _ in range(self.width)] for _ in range(self.height)]
-        self.pixels = ai_utils.arrayInvert(convert_to_integer(data))
+        self.pixels = p3_utils.array_invert(convert_to_integer(data))
 
     def get_pixel(self, column, row):
         """
@@ -79,7 +97,7 @@ class Datum:
         Renders the data item as an ascii image.
         """
         rows = []
-        data = ai_utils.arrayInvert(self.pixels)
+        data = p3_utils.array_invert(self.pixels)
         for row in data:
             ascii_val = map(ascii_grayscale_conversion_function, row)
             rows.append("".join(ascii_val))
@@ -114,6 +132,23 @@ def load_data_file(filename, n, width, height):
     return items
 
 
+def load_all_data_in_file(filename, width, height):
+    """
+    Reads all data images from a file and returns a list of Datum objects.
+    """
+    datum_width = width
+    datum_height = height
+    fin = read_lines(filename)
+    fin.reverse()
+    items = []
+    for i in range(int(len(fin)/height)):
+        data = []
+        for j in range(height):
+            data.append(list(fin.pop()))
+        items.append(Datum(data, datum_width, datum_height))
+    return items
+
+
 def read_lines(filename):
     """Opens a file or reads it from the zip archive data.zip"""
     if os.path.exists(filename):
@@ -130,6 +165,16 @@ def load_labels_file(filename, n):
     fin = read_lines(filename)
     labels = []
     for line in fin[:min(n, len(fin))]:
+        if line == '':
+            break
+        labels.append(int(line))
+    return labels
+
+
+def load_all_labels_in_file(filename):
+    fin = read_lines(filename)
+    labels = []
+    for line in fin:
         if line == '':
             break
         labels.append(int(line))
@@ -164,10 +209,10 @@ def convert_to_integer(data):
     """
     Helper function for file reading.
     """
-    if isinstance(data, list):
-        return integer_conversion_function(data)
-    else:
-        return map(convert_to_integer, data)
+    for row in data:
+        for i in range(len(row)):
+            row[i] = integer_conversion_function(row[i])
+    return data
 
 
 # Testing

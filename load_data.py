@@ -10,9 +10,8 @@
 import os
 import zipfile
 
-import numpy as np
-
 import p3_utils
+import utils
 
 
 # Module Classes
@@ -23,6 +22,9 @@ class DigitData:
     All the image variables are lists of Datums.
     All the labels are just lists of final labels
     """
+    DIGIT_DATUM_WIDTH = 28
+    DIGIT_DATUM_HEIGHT = 28
+
     def __init__(self, digit_data_path):
         self.digit_train_imgs = load_all_data_in_file(os.path.join(digit_data_path, "trainingimages"), 28, 28)
         self.digit_validation_imgs = load_all_data_in_file(os.path.join(digit_data_path, "validationimages"), 28, 28)
@@ -30,6 +32,20 @@ class DigitData:
         self.digit_train_labels = load_all_labels_in_file(os.path.join(digit_data_path, "traininglabels"))
         self.digit_validation_labels = load_all_labels_in_file(os.path.join(digit_data_path, "validationlabels"))
         self.digit_test_labels = load_all_labels_in_file(os.path.join(digit_data_path, "testlabels"))
+
+    def basic_feature_extractor_digit(self, datum):
+        """
+        Returns a set of pixel features indicating whether
+        each pixel in the provided datum is white (0) or gray/black (1)
+        """
+        features = utils.Counter()
+        for x in range(self.DIGIT_DATUM_WIDTH):
+            for y in range(self.DIGIT_DATUM_HEIGHT):
+                if datum.get_pixel(x, y) > 0:
+                    features[(x, y)] = 1
+                else:
+                    features[(x, y)] = 0
+        return features
 
 
 class FaceData:
@@ -154,7 +170,7 @@ def load_all_data_in_file(filename, width, height):
     fin = read_lines(filename)
     fin.reverse()
     items = []
-    for i in range(int(len(fin)/height)):
+    for i in range(int(len(fin) / height)):
         data = []
         for j in range(height):
             data.append(list(fin.pop()))
@@ -231,22 +247,4 @@ def convert_to_integer(data):
 # Testing
 
 def _test():
-    import doctest
-    doctest.testmod()  # Test the interactive sessions in function comments
-    n = 1
-    #  items = loadDataFile("facedata/facedatatrain", n,60,70)
-    #  labels = loadLabelsFile("facedata/facedatatrainlabels", n)
-    items = load_data_file("digitdata/trainingimages", n, 28, 28)
-    labels = load_labels_file("digitdata/traininglabels", n)
-    for i in range(1):
-        print(items[i])
-        print(items[i])
-        print(items[i].height)
-        print(items[i].width)
-        print(dir(items[i]))
-        print(items[i].get_pixels())
-        print(labels[i])
-
-
-if __name__ == "__main__":
-    _test()
+    pass

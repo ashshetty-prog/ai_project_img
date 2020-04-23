@@ -9,12 +9,14 @@
 
 import os
 import zipfile
-
+import utils
+import digit_perceptron
 import numpy as np
 
 import p3_utils
 
-
+DIGIT_DATUM_WIDTH=28
+DIGIT_DATUM_HEIGHT=28
 # Module Classes
 
 
@@ -32,6 +34,21 @@ class DigitData:
         self.digit_validation_labels = load_all_labels_in_file(os.path.join(digit_data_path, "validationlabels"))
         self.digit_test_labels = load_all_labels_in_file(os.path.join(digit_data_path, "testlabels"))
 
+    def basicFeatureExtractorDigit(self, datum):
+        """
+        Returns a set of pixel features indicating whether
+        each pixel in the provided datum is white (0) or gray/black (1)
+        """
+        a = datum.get_pixels()
+
+        features = utils.Counter()
+        for x in range(DIGIT_DATUM_WIDTH):
+            for y in range(DIGIT_DATUM_HEIGHT):
+                if datum.get_pixel(x, y) > 0:
+                    features[(x, y)] = 1
+                else:
+                    features[(x, y)] = 0
+        return features
 
 class Datum:
     """
@@ -225,6 +242,7 @@ def _test():
     #  labels = loadLabelsFile("facedata/facedatatrainlabels", n)
     items = load_data_file("digitdata/trainingimages", n, 28, 28)
     labels = load_labels_file("digitdata/traininglabels", n)
+    '''
     for i in range(1):
         print(items[i])
         print(items[i])
@@ -233,7 +251,51 @@ def _test():
         print(dir(items[i]))
         print(items[i].get_pixels())
         print(labels[i])
-
+    '''
 
 if __name__ == "__main__":
     _test()
+    iterations = 3
+    input_data = input('enter the type of data d/f')
+    classifier_type = input('Enter the type of classifier n/p')
+    if input_data == 'd':
+        legalLabels = range(10)
+        digit_data = DigitData("digitdata")
+    else:
+        pass
+        #create face object
+
+    if classifier_type == 'p':
+        classifier = digit_perceptron.PerceptronClassifier(legalLabels, iterations)
+        featureFunction = digit_data.basicFeatureExtractorDigit
+        # digit_perceptron.cool_visualization(digit_data)
+
+    "Extracting features..."
+    trainingData = map(featureFunction, digit_data.digit_train_imgs)
+    validationData = map(featureFunction, digit_data.digit_validation_imgs)
+    testData = map(featureFunction, digit_data.digit_test_imgs)
+
+    #print('training data',next(trainingData))
+    trainingDataList = list(trainingData)
+    validationDataList = list(validationData)
+    testDataList = list(testData)
+    size = len(trainingDataList)
+    classifier.setWeights(range(10))
+    #for label in legalLabels:
+        #print('weights',classifier.weights[label])s
+    # Conduct training and testing
+    for i in np.arange(0.8, 1, 0.1):
+        index = int(size*i)
+        #print('index ', index)
+        print('Training...')
+        errors = classifier.train(trainingDataList[:index], digit_data.digit_train_labels, validationData, digit_data.digit_validation_labels)
+        print('errors over 3 iterations', errors)
+        print('Validating...')
+        guesses = classifier.classify(validationDataList)
+        correct = [guesses[i] == digit_data.digit_validation_labels[i] for i in range(len(digit_data.digit_validation_labels))].count(True)
+        print(str(correct), 'correct out of ',str(len(digit_data.digit_validation_labels)))
+        #" (%.1f%%).") % (100.0 * correct / len(validationLabels)) len(digit_data.digit_validation_labels)
+        print('Testing...')
+        guesses = classifier.classify(testDataList)
+        correct = [guesses[i] == digit_data.digit_test_labels[i] for i in range(len(digit_data.digit_test_labels))].count(True)
+        print(str(correct), 'correct out of ',str(len(digit_data.digit_test_labels)),'percentage', (100.0 * correct / len(digit_data.digit_test_labels)))

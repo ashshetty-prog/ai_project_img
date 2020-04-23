@@ -1,6 +1,9 @@
 import p3_utils
-from load_data import DigitData, DIGIT_DATUM_WIDTH, DIGIT_DATUM_HEIGHT
 import utils
+from load_data import DigitData
+
+import numpy as np
+
 
 class PerceptronClassifier:
     """
@@ -21,10 +24,9 @@ class PerceptronClassifier:
     def setWeights(self, weights):
         assert len(weights) == len(self.legalLabels);
         for label in self.legalLabels:
-            for x in range(DIGIT_DATUM_WIDTH):
-                for y in range(DIGIT_DATUM_HEIGHT):
-                    self.weights[label][(x,y)] = weights[label]
-
+            for x in range(DigitData.DIGIT_DATUM_WIDTH):
+                for y in range(DigitData.DIGIT_DATUM_HEIGHT):
+                    self.weights[label][(x, y)] = weights[label]
 
     def train(self, trainingData, trainingLabels, validationData, validationLabels):
         """
@@ -38,18 +40,18 @@ class PerceptronClassifier:
         (and thus represents a vector a values).
         """
 
-        #self.features = trainingData[0].keys()  # could be useful later
+        # self.features = trainingData[0].keys()  # could be useful later
         # DO NOT ZERO OUT YOUR WEIGHTS BEFORE STARTING TRAINING, OR
         # THE AUTOGRADER WILL LIKELY DEDUCT POINTS.
         errors = []
         for iteration in range(self.max_iterations):
-            print('Starting iteration ',iteration)
+            print('Starting iteration ', iteration)
             err = 0
             for i in range(len(trainingData)):
                 vectors = utils.Counter()
                 for l in self.legalLabels:
                     vectors[l] = self.weights[l] * trainingData[i]
-                    #print('vector', vectors[l])
+                    # print('vector', vectors[l])
                 guess = vectors.argMax()
 
                 actual = trainingLabels[i]
@@ -58,7 +60,7 @@ class PerceptronClassifier:
                     self.weights[actual] = self.weights[actual] + trainingData[i]
                     err += 1
             errors.append(err)
-        #utils.raiseNotDefined()
+        # utils.raiseNotDefined()
         return errors
 
     def classify(self, data):
@@ -106,4 +108,44 @@ def cool_visualization(digit_data):
 
 
 if __name__ == '__main__':
-    pass
+    iterations = 3
+    legalLabels = range(10)
+    digit_data = DigitData("digitdata")
+
+    classifier = PerceptronClassifier(legalLabels, iterations)
+    featureFunction = digit_data.basic_feature_extractor_digit
+    # digit_perceptron.cool_visualization(digit_data)
+
+    "Extracting features..."
+    trainingData = map(featureFunction, digit_data.digit_train_imgs)
+    validationData = map(featureFunction, digit_data.digit_validation_imgs)
+    testData = map(featureFunction, digit_data.digit_test_imgs)
+
+    # print('training data',next(trainingData))
+    trainingDataList = list(trainingData)
+    validationDataList = list(validationData)
+    testDataList = list(testData)
+    size = len(trainingDataList)
+    classifier.setWeights(range(10))
+    # for label in legalLabels:
+    # print('weights',classifier.weights[label])s
+    # Conduct training and testing
+    for i in np.arange(0.8, 1, 0.1):
+        index = int(size * i)
+        # print('index ', index)
+        print('Training...')
+        errors = classifier.train(trainingDataList[:index], digit_data.digit_train_labels, validationData,
+                                  digit_data.digit_validation_labels)
+        print('errors over 3 iterations', errors)
+        print('Validating...')
+        guesses = classifier.classify(validationDataList)
+        correct = [guesses[i] == digit_data.digit_validation_labels[i] for i in
+                   range(len(digit_data.digit_validation_labels))].count(True)
+        print(str(correct), 'correct out of ', str(len(digit_data.digit_validation_labels)))
+        # " (%.1f%%).") % (100.0 * correct / len(validationLabels)) len(digit_data.digit_validation_labels)
+        print('Testing...')
+        guesses = classifier.classify(testDataList)
+        correct = [guesses[i] == digit_data.digit_test_labels[i] for i in
+                   range(len(digit_data.digit_test_labels))].count(True)
+        print(str(correct), 'correct out of ', str(len(digit_data.digit_test_labels)), 'percentage',
+              (100.0 * correct / len(digit_data.digit_test_labels)))

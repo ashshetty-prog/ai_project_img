@@ -24,13 +24,26 @@ class DigitData:
     All the labels are just lists of final labels
     """
     def __init__(self, digit_data_path):
-        self.digit_path = digit_data_path
         self.digit_train_imgs = load_all_data_in_file(os.path.join(digit_data_path, "trainingimages"), 28, 28)
         self.digit_validation_imgs = load_all_data_in_file(os.path.join(digit_data_path, "validationimages"), 28, 28)
         self.digit_test_imgs = load_all_data_in_file(os.path.join(digit_data_path, "testimages"), 28, 28)
         self.digit_train_labels = load_all_labels_in_file(os.path.join(digit_data_path, "traininglabels"))
         self.digit_validation_labels = load_all_labels_in_file(os.path.join(digit_data_path, "validationlabels"))
         self.digit_test_labels = load_all_labels_in_file(os.path.join(digit_data_path, "testlabels"))
+
+
+class FaceData:
+    """
+    All the image variables are lists of Datums.
+    All the labels are just lists of final labels
+    """
+    def __init__(self, face_data_path):
+        self.face_train_images = load_all_data_in_file(os.path.join(face_data_path, "facedatatrain"), 60, 70)
+        self.face_validation_imgs = load_all_data_in_file(os.path.join(face_data_path, "facedatavalidation"), 60, 70)
+        self.face_test_imgs = load_all_data_in_file(os.path.join(face_data_path, "facedatatest"), 60, 70)
+        self.face_train_labels = load_all_labels_in_file(os.path.join(face_data_path, "facedatatrainlabels"))
+        self.face_validation_labels = load_all_labels_in_file(os.path.join(face_data_path, "facedatavalidationlabels"))
+        self.face_test_labels = load_all_labels_in_file(os.path.join(face_data_path, "facedatatestlabels"))
 
 
 class Datum:

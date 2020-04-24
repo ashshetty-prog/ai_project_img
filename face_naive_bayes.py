@@ -2,17 +2,17 @@ from typing import List
 
 import numpy as np
 
-from load_data import DigitData, Datum
+from load_data import FaceData, Datum
 
 
-class NaiveBayesDigits:
+class NaiveBayesFace:
     def __init__(self):
-        self.digit_data = DigitData("digitdata")
+        self.face_data = FaceData("facedata")
         self.label_prob = {}
         self.feature_prob = {}
         self.feature_given_label_prob = {}
-        self.train_features = self.get_features_for_data(self.digit_data.digit_train_imgs)
-        self.build_probabilities(self.train_features, self.digit_data.digit_train_labels)
+        self.train_features = self.get_features_for_data(self.face_data.face_train_images)
+        self.build_probabilities(self.train_features, self.face_data.face_train_labels)
 
     def get_blocks(self, arr: np.ndarray, nrows, ncols):
         n_vert_blocks = arr.shape[1] // ncols
@@ -44,7 +44,7 @@ class NaiveBayesDigits:
     def build_probabilities(self, train_features, train_labels):
         feature_given_label_counter = {}
         feature_counter = [1 for _ in range(len(train_features[0]))]
-        for label in range(10):
+        for label in range(2):
             self.label_prob[label] = train_labels.count(label) / len(train_labels)
             feature_given_label_counter[label] = [1 for _ in range(len(train_features[0]))]
 
@@ -60,7 +60,7 @@ class NaiveBayesDigits:
 
     def predict(self, features):
         prob_labels = []
-        for label in range(10):
+        for label in range(2):
             prob = 1
             for i, ele in enumerate(features):
                 if ele == 1:
@@ -72,20 +72,26 @@ class NaiveBayesDigits:
 
 
 if __name__ == '__main__':
-    nbd = NaiveBayesDigits()
-    test_features = nbd.get_features_for_data(nbd.digit_data.digit_test_imgs)
+    nbf = NaiveBayesFace()
+    # for img in nbd.face_data.face_test_imgs:
+    #     print(len(img.get_pixels()))
+    #     pixel_list = img.get_pixels()
+    #     for p in pixel_list:
+    #         print(len(p))
+    #     break
+    test_features = nbf.get_features_for_data(nbf.face_data.face_test_imgs)
     predictions = []
     for feature in test_features:
-        predictions.append(nbd.predict(feature))
+        predictions.append(nbf.predict(feature))
 
     correct, wrong = (0, 0)
     for k, pred in enumerate(predictions):
-        if pred == nbd.digit_data.digit_test_labels[k]:
+        if pred == nbf.face_data.face_test_labels[k]:
             correct += 1
         else:
             wrong += 1
     print("The predictions are: ", predictions)
-    print("The actual labels are:", nbd.digit_data.digit_test_labels)
+    print("The actual labels are:", nbf.face_data.face_test_labels)
     print("No. of correct guesses = {}".format(correct))
     print("No. of wrong guesses = {}".format(wrong))
     print("Percentage accuracy: {}".format((correct * 100) / (correct + wrong)))

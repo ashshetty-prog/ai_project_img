@@ -1,11 +1,11 @@
-import p3_utils
-import utils
-from load_data import DigitData
-
 import numpy as np
 
+import p3_utils
+import utils
+from load_data import FaceData
 
-class PerceptronClassifier:
+
+class FacePerceptron:
     """
     Perceptron classifier.
 
@@ -24,8 +24,8 @@ class PerceptronClassifier:
     def setWeights(self, weights):
         assert len(weights) == len(self.legalLabels);
         for label in self.legalLabels:
-            for x in range(DigitData.DIGIT_DATUM_WIDTH):
-                for y in range(DigitData.DIGIT_DATUM_HEIGHT):
+            for x in range(FaceData.FACE_DATUM_WIDTH):
+                for y in range(FaceData.FACE_DATUM_HEIGHT):
                     self.weights[label][(x, y)] = weights[label]
 
     def train(self, trainingData, trainingLabels, validationData, validationLabels):
@@ -90,7 +90,7 @@ class PerceptronClassifier:
         return featuresWeights
 
 
-def cool_visualization(digit_data):
+def cool_visualization(face_data):
     """
     I added this just to make sure that the loaded data is correct. But I ended up finding that if you stand far away
     from the monitor, you can actually see the digit. VERY COOL :P
@@ -99,7 +99,7 @@ def cool_visualization(digit_data):
     directly from DigitData.digit_train_imgs and work with them. I'd recommend checking out the Datum class as well.
     :return:
     """
-    for i, datum in enumerate(digit_data.digit_test_imgs):
+    for i, datum in enumerate(face_data.face_test_imgs):
         inverted_datum = p3_utils.array_invert(datum.get_pixels())
         for row in inverted_datum:
             print(row)
@@ -110,16 +110,17 @@ def cool_visualization(digit_data):
 if __name__ == '__main__':
     iterations = 3
     legalLabels = range(10)
-    digit_data = DigitData("digitdata")
+    face_data = FaceData("facedata")
 
-    classifier = PerceptronClassifier(legalLabels, iterations)
-    featureFunction = digit_data.basic_feature_extractor_digit
-    # cool_visualization(digit_data)
+    # cool_visualization(face_data)
+    classifier = FacePerceptron(legalLabels, iterations)
+    featureFunction = face_data.basic_feature_extractor
+    # digit_perceptron.cool_visualization(digit_data)
 
     "Extracting features..."
-    trainingData = map(featureFunction, digit_data.digit_train_imgs)
-    validationData = map(featureFunction, digit_data.digit_validation_imgs)
-    testData = map(featureFunction, digit_data.digit_test_imgs)
+    trainingData = map(featureFunction, face_data.face_train_images)
+    validationData = map(featureFunction, face_data.face_validation_imgs)
+    testData = map(featureFunction, face_data.face_test_imgs)
 
     # print('training data',next(trainingData))
     trainingDataList = list(trainingData)
@@ -130,22 +131,24 @@ if __name__ == '__main__':
     # for label in legalLabels:
     # print('weights',classifier.weights[label])s
     # Conduct training and testing
+    print(len(face_data.face_validation_labels))
+    print(len(validationDataList))
     for i in np.arange(0.8, 1, 0.1):
         index = int(size * i)
         # print('index ', index)
         print('Training...')
-        errors = classifier.train(trainingDataList[:index], digit_data.digit_train_labels, validationData,
-                                  digit_data.digit_validation_labels)
+        errors = classifier.train(trainingDataList[:index], face_data.face_train_labels, validationData,
+                                  face_data.face_validation_labels)
         print('errors over 3 iterations', errors)
         print('Validating...')
         guesses = classifier.classify(validationDataList)
-        correct = [guesses[i] == digit_data.digit_validation_labels[i] for i in
-                   range(len(digit_data.digit_validation_labels))].count(True)
-        print(str(correct), 'correct out of ', str(len(digit_data.digit_validation_labels)))
+        correct = [guesses[i] == face_data.face_validation_labels[i] for i in
+                   range(len(face_data.face_validation_labels))].count(True)
+        print(str(correct), 'correct out of ', str(len(face_data.face_validation_labels)))
         # " (%.1f%%).") % (100.0 * correct / len(validationLabels)) len(digit_data.digit_validation_labels)
         print('Testing...')
         guesses = classifier.classify(testDataList)
-        correct = [guesses[i] == digit_data.digit_test_labels[i] for i in
-                   range(len(digit_data.digit_test_labels))].count(True)
-        print(str(correct), 'correct out of ', str(len(digit_data.digit_test_labels)), 'percentage',
-              (100.0 * correct / len(digit_data.digit_test_labels)))
+        correct = [guesses[i] == face_data.face_test_labels[i] for i in
+                   range(len(face_data.face_test_labels))].count(True)
+        print(str(correct), 'correct out of ', str(len(face_data.face_test_labels)), 'percentage',
+              (100.0 * correct / len(face_data.face_test_labels)))

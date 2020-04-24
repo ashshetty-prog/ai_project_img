@@ -90,7 +90,7 @@ class FacePerceptron:
         return featuresWeights
 
 
-def cool_visualization(digit_data):
+def cool_visualization(face_data):
     """
     I added this just to make sure that the loaded data is correct. But I ended up finding that if you stand far away
     from the monitor, you can actually see the digit. VERY COOL :P
@@ -99,7 +99,7 @@ def cool_visualization(digit_data):
     directly from DigitData.digit_train_imgs and work with them. I'd recommend checking out the Datum class as well.
     :return:
     """
-    for i, datum in enumerate(digit_data.digit_test_imgs):
+    for i, datum in enumerate(face_data.face_test_imgs):
         inverted_datum = p3_utils.array_invert(datum.get_pixels())
         for row in inverted_datum:
             print(row)
@@ -112,6 +112,7 @@ if __name__ == '__main__':
     legalLabels = range(10)
     face_data = FaceData("facedata")
 
+    # cool_visualization(face_data)
     classifier = FacePerceptron(legalLabels, iterations)
     featureFunction = face_data.basic_feature_extractor
     # digit_perceptron.cool_visualization(digit_data)
@@ -128,7 +129,7 @@ if __name__ == '__main__':
     size = len(trainingDataList)
     classifier.setWeights(range(10))
     # for label in legalLabels:
-    # print('weights',classifier.weights[label])s
+    # print('weights',classifier.weights[label])
     # Conduct training and testing
     print(len(face_data.face_validation_labels))
     print(len(validationDataList))

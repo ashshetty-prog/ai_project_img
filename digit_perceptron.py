@@ -114,7 +114,7 @@ if __name__ == '__main__':
 
     classifier = PerceptronClassifier(legalLabels, iterations)
     featureFunction = digit_data.basic_feature_extractor_digit
-    # digit_perceptron.cool_visualization(digit_data)
+    # cool_visualization(digit_data)
 
     "Extracting features..."
     trainingData = map(featureFunction, digit_data.digit_train_imgs)

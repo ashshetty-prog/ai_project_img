@@ -64,11 +64,10 @@ class NaiveBayesDigits:
             prob = 1
             for i, ele in enumerate(features):
                 if ele == 1:
-                    prob *= ((self.feature_given_label_prob[label][i] * self.label_prob[label]) / self.feature_prob[i])
+                    prob *= (self.feature_given_label_prob[label][i] / self.feature_prob[i])
                 else:
-                    prob *= (((1 - self.feature_given_label_prob[label][i]) * self.label_prob[label]) / (
-                                1 - self.feature_prob[i]))
-            prob_labels.append(prob)
+                    prob *= ((1 - self.feature_given_label_prob[label][i]) / (1 - self.feature_prob[i]))
+            prob_labels.append(prob * self.label_prob[label])
         return prob_labels.index(max(prob_labels))
 
 
@@ -79,10 +78,9 @@ if __name__ == '__main__':
     for feature in test_features:
         predictions.append(nbd.predict(feature))
 
-
-    correct,wrong = (0,0)
-    for i, pred in enumerate(predictions):
-        if pred == nbd.digit_data.digit_test_labels[i]:
+    correct, wrong = (0, 0)
+    for k, pred in enumerate(predictions):
+        if pred == nbd.digit_data.digit_test_labels[k]:
             correct += 1
         else:
             wrong += 1

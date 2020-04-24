@@ -53,14 +53,30 @@ class FaceData:
     All the image variables are lists of Datums.
     All the labels are just lists of final labels
     """
+    FACE_DATUM_WIDTH = 60
+    FACE_DATUM_HEIGHT = 74
+
     def __init__(self, face_data_path):
-        self.face_train_images = load_all_data_in_file(os.path.join(face_data_path, "facedatatrain"), 60, 70)
-        self.face_validation_imgs = load_all_data_in_file(os.path.join(face_data_path, "facedatavalidation"), 60, 70)
-        self.face_test_imgs = load_all_data_in_file(os.path.join(face_data_path, "facedatatest"), 60, 70)
+        self.face_train_images = load_all_data_in_file(os.path.join(face_data_path, "facedatatrain"), 60, 74)
+        self.face_validation_imgs = load_all_data_in_file(os.path.join(face_data_path, "facedatavalidation"), 60, 74)
+        self.face_test_imgs = load_all_data_in_file(os.path.join(face_data_path, "facedatatest"), 60, 74)
         self.face_train_labels = load_all_labels_in_file(os.path.join(face_data_path, "facedatatrainlabels"))
         self.face_validation_labels = load_all_labels_in_file(os.path.join(face_data_path, "facedatavalidationlabels"))
         self.face_test_labels = load_all_labels_in_file(os.path.join(face_data_path, "facedatatestlabels"))
 
+    def basic_feature_extractor(self, datum):
+        """
+        Returns a set of pixel features indicating whether
+        each pixel in the provided datum is white (0) or gray/black (1)
+        """
+        features = utils.Counter()
+        for x in range(self.FACE_DATUM_WIDTH):
+            for y in range(self.FACE_DATUM_HEIGHT):
+                if datum.get_pixel(x, y) > 0:
+                    features[(x, y)] = 1
+                else:
+                    features[(x, y)] = 0
+        return features
 
 class Datum:
     """

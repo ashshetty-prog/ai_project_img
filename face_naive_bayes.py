@@ -72,25 +72,26 @@ class NaiveBayesFace:
 
 
 if __name__ == '__main__':
-    nbd = NaiveBayesFace()
-    # for img in nbd.digit_data.face_test_imgs:
+    nbf = NaiveBayesFace()
+    # for img in nbd.face_data.face_test_imgs:
     #     print(len(img.get_pixels()))
     #     pixel_list = img.get_pixels()
     #     for p in pixel_list:
     #         print(len(p))
     #     break
-    test_features = nbd.get_features_for_data(nbd.face_data.face_test_imgs)
+    test_features = nbf.get_features_for_data(nbf.face_data.face_test_imgs)
     predictions = []
     for feature in test_features:
-        predictions.append(nbd.predict(feature))
+        predictions.append(nbf.predict(feature))
 
     correct, wrong = (0, 0)
     for k, pred in enumerate(predictions):
-        if pred == nbd.face_data.face_test_labels[k]:
+        if pred == nbf.face_data.face_test_labels[k]:
             correct += 1
         else:
             wrong += 1
-    print(predictions)
-    print(nbd.face_data.face_test_labels)
-    print(correct)
-    print(wrong)
+    print("The predictions are: ", predictions)
+    print("The actual labels are:", nbf.face_data.face_test_labels)
+    print("No. of correct guesses = {}".format(correct))
+    print("No. of wrong guesses = {}".format(wrong))
+    print("Percentage accuracy: {}".format((correct * 100) / (correct + wrong)))

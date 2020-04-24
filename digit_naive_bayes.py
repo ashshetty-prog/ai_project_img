@@ -84,7 +84,8 @@ if __name__ == '__main__':
             correct += 1
         else:
             wrong += 1
-    print(predictions)
-    print(nbd.digit_data.digit_test_labels)
-    print(correct)
-    print(wrong)
+    print("The predictions are: ", predictions)
+    print("The actual labels are:", nbd.digit_data.digit_test_labels)
+    print("No. of correct guesses = {}".format(correct))
+    print("No. of wrong guesses = {}".format(wrong))
+    print("Percentage accuracy: {}".format((correct * 100) / (correct + wrong)))

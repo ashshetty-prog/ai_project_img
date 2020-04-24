@@ -129,7 +129,7 @@ if __name__ == '__main__':
     size = len(trainingDataList)
     classifier.setWeights(range(10))
     # for label in legalLabels:
-    # print('weights',classifier.weights[label])
+    # print('weights',classifier.weights[label])s
     # Conduct training and testing
     print(len(face_data.face_validation_labels))
     print(len(validationDataList))

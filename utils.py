@@ -8,9 +8,12 @@
 
 import heapq
 import inspect
+import math
 import random
 import sys
 
+import numpy as np
+from numpy.linalg import linalg
 """
  Data structures useful for implementing SearchAgents
 """
@@ -329,6 +332,68 @@ class Counter(dict):
                 continue
             addend[key] = -1 * y[key]
         return addend
+
+    def euclidean_distance(self, y):
+        dist = 0
+        for key in self:
+            if key in y:
+                dist += (self[key] - y[key])**2
+
+        return math.sqrt(dist)
+
+    def manhattan_distance(self, y):
+        dist_manhattan = 0
+        for key in self:
+            if key in y:
+                dist_manhattan += (abs(self[key] - y[key]))
+
+        return dist_manhattan
+
+    def cosine_distance(self,y):
+        sum_aa, sum_ab, sum_bb = 0, 0, 0
+        for key in self:
+            if key in y:
+                pix_a = self[key]
+                pix_b = y[key]
+                sum_aa += pix_a * pix_a
+                sum_bb += pix_b * pix_b
+                sum_ab += pix_a * pix_b
+        return 1- (sum_ab / math.sqrt(sum_aa * sum_bb))
+
+    def pearson_distance(self,img2):
+        items = self.items()
+        x = [i[1] for i in items]
+        items = img2.items()
+        y = [i[1] for i in items]
+        #print('val', values)
+        #r, p = pearsonr(self, y)def pearsonr(x, y):
+
+        n = len(x)
+        if n != len(y):
+            raise ValueError('x and y must have the same length.')
+
+        if n < 2:
+            raise ValueError('x and y must have length at least 2.')
+
+        x = np.asarray(x)
+        y = np.asarray(y)
+        dtype = type(1.0 + x[0] + y[0])
+
+        if n == 2:
+            return dtype(np.sign(x[1] - x[0])*np.sign(y[1] - y[0])), 1.0
+
+        xmean = x.mean(dtype=dtype)
+        ymean = y.mean(dtype=dtype)
+
+        xm = x.astype(dtype) - xmean
+        ym = y.astype(dtype) - ymean
+
+        normxm = linalg.norm(xm)
+        normym = linalg.norm(ym)
+
+        r = np.dot(xm/normxm, ym/normym)
+        r = max(min(r, 1.0), -1.0)
+        return 1-r
 
 
 def raiseNotDefined():

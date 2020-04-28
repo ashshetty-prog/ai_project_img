@@ -4,6 +4,7 @@ import utils
 from load_data import DigitData, Datum, FaceData
 import statistics
 from statistics import mode
+from multiprocessing import Pool
 import time
 start_time = time.time()
 
@@ -41,12 +42,19 @@ if __name__ == '__main__':
     # test_features = knnd.get_features_for_data(knnd.digit_data.digit_test_imgs)
     predictions = []
 
+    # Run this with a pool of 5 agents having a chunksize of 3 until finished
+    agents = 5
+    chunksize = 3
+    with Pool(processes=agents) as pool:
+        predictions = pool.map(knnd.predict, knnd.testData, chunksize)
     # cool_visualization(digit_data)
+    '''
     predictions = list(map(knnd.predict, knnd.testData))
     print('map output', predictions)
 
     #for image in knnd.testData:
     #    predictions.append(knnd.predict(image))
+    '''
 
     correct, wrong = (0, 0)
     for k, pred in enumerate(predictions):

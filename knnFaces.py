@@ -1,11 +1,9 @@
-import numpy as np
-import operator
 import utils
 from load_data import DigitData, Datum, FaceData
-import statistics
 from statistics import mode
-import multiprocessing
-
+from multiprocessing import Pool
+import time
+start_time = time.time()
 
 class KnnFaces:
     def __init__(self, k=5):
@@ -46,11 +44,19 @@ if __name__ == '__main__':
     # test_features = knnd.get_features_for_data(knnd.digit_data.digit_test_imgs)
     predictions = []
 
+    # Run this with a pool of 5 agents having a chunksize of 3 until finished
+    agents = 5
+    chunksize = 3
+    with Pool(processes=agents) as pool:
+        predictions = pool.map(knnf.predict, knnf.testData, chunksize)
     # cool_visualization(digit_data)
+    '''
     predictions = list(map(knnf.predict, knnf.testData))
     print('map output', predictions)
+
     # for image in knnf.testData:
         # predictions.append(list(map(knnf.predict, image)))
+    '''
 
     correct, wrong = (0, 0)
     for k, pred in enumerate(predictions):
@@ -63,3 +69,4 @@ if __name__ == '__main__':
     print("No. of correct guesses = {}".format(correct))
     print("No. of wrong guesses = {}".format(wrong))
     print("Percentage accuracy: {}".format((correct * 100) / (correct + wrong)))
+    print('execution time', time.time() - start_time)

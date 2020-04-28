@@ -4,6 +4,8 @@ import utils
 from load_data import DigitData, Datum, FaceData
 import statistics
 from statistics import mode
+import multiprocessing
+
 
 class KnnFaces:
     def __init__(self, k=5):
@@ -14,24 +16,27 @@ class KnnFaces:
         self.trainingData = list(map(featureFunction, self.face_data.face_train_images))
         self.testData = list(map(featureFunction, self.face_data.face_test_imgs))
 
-
     def predict(self, image):
         img_a = utils.Counter()
         img_b = utils.Counter()
         img_a = image
-        for i, train_image in enumerate(self.trainingData):
-            img_b = train_image
-            self.distance.append((self.face_data.face_train_labels[i], img_a.cosine_distance(img_b)))
-            #manhattan_distance(img_b)/(self.face_data.FACE_DATUM_WIDTH*self.face_data.FACE_DATUM_HEIGHT)
+        self.distance = list(map(lambda x: (self.face_data.face_train_labels[x[0]], img_a.cosine_distance(x[1])),
+                                 enumerate(self.trainingData)))
+        # self.distance = list(map(img_a.cosine_distance, self.trainingData))
+        # print('distance',self.distance)
+        # for i, train_image in enumerate(self.trainingData):
+        #    img_b = train_image
+        #    self.distance.append((self.face_data.face_train_labels[i], img_a.cosine_distance(img_b)))
+        # manhattan_distance(img_b)/(self.face_data.FACE_DATUM_WIDTH*self.face_data.FACE_DATUM_HEIGHT)
         # sort the list of tuples by distances in increasing order
         sorted_dist = (sorted(self.distance, key=lambda x: x[1]))
         k_neighbors = sorted_dist[:self.k]
-        print('k neighbors', k_neighbors)
+        # print('k neighbors', k_neighbors)
         # select k labels
         klabels = [label for (label, _) in k_neighbors]
         # find the mode of the list
         pred = mode(klabels)
-        print('prediction', pred)
+        # print('prediction', pred)
         return pred
 
 
@@ -42,9 +47,10 @@ if __name__ == '__main__':
     predictions = []
 
     # cool_visualization(digit_data)
-
-    for image in knnf.testData:
-        predictions.append(knnf.predict(image))
+    predictions = list(map(knnf.predict, knnf.testData))
+    print('map output', predictions)
+    # for image in knnf.testData:
+        # predictions.append(list(map(knnf.predict, image)))
 
     correct, wrong = (0, 0)
     for k, pred in enumerate(predictions):

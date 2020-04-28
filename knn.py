@@ -4,7 +4,8 @@ import utils
 from load_data import DigitData, Datum, FaceData
 import statistics
 from statistics import mode
-
+import time
+start_time = time.time()
 
 class KnnDigits:
     def __init__(self, k=5):
@@ -19,9 +20,11 @@ class KnnDigits:
         img_a = utils.Counter()
         img_b = utils.Counter()
         img_a = image
-        for i, train_image in enumerate(self.trainingData):
-            img_b = train_image
-            self.distance.append((self.digit_data.digit_train_labels[i], img_a.cosine_distance(img_b)))
+        self.distance = list(map(lambda x: (self.digit_data.digit_train_labels[x[0]], img_a.cosine_distance(x[1])),
+                                 enumerate(self.trainingData)))
+        #for i, train_image in enumerate(self.trainingData):
+        #    img_b = train_image
+        #    self.distance.append((self.digit_data.digit_train_labels[i], img_a.cosine_distance(img_b)))
         # sort the list of tuples by distances in increasing order
         sorted_dist = (sorted(self.distance, key=lambda x: x[1]))
         k_neighbors = sorted_dist[:self.k]
@@ -39,9 +42,11 @@ if __name__ == '__main__':
     predictions = []
 
     # cool_visualization(digit_data)
+    predictions = list(map(knnd.predict, knnd.testData))
+    print('map output', predictions)
 
-    for image in knnd.testData:
-        predictions.append(knnd.predict(image))
+    #for image in knnd.testData:
+    #    predictions.append(knnd.predict(image))
 
     correct, wrong = (0, 0)
     for k, pred in enumerate(predictions):
@@ -54,3 +59,4 @@ if __name__ == '__main__':
     print("No. of correct guesses = {}".format(correct))
     print("No. of wrong guesses = {}".format(wrong))
     print("Percentage accuracy: {}".format((correct * 100) / (correct + wrong)))
+    print('execution time', time.time() - start_time)

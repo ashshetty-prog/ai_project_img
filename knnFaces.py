@@ -13,7 +13,7 @@ class KnnFaces:
         self.distance = []
         self.k = k
         feature_function = self.face_data.basic_feature2_extractor
-        self.trainingData = list(map(feature_function, self.face_data.face_train_images))
+        self.trainingData = list(map(feature_function, self.face_data.face_train_imgs))
         self.testData = list(map(feature_function, self.face_data.face_test_imgs))
 
     def predict(self, image):

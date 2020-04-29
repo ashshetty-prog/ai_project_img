@@ -57,7 +57,7 @@ class FaceData:
     FACE_DATUM_HEIGHT = 70
 
     def __init__(self, face_data_path):
-        self.face_train_images = load_all_data_in_file(os.path.join(face_data_path, "facedatatrain"), 60, 70)
+        self.face_train_imgs = load_all_data_in_file(os.path.join(face_data_path, "facedatatrain"), 60, 70)
         self.face_validation_imgs = load_all_data_in_file(os.path.join(face_data_path, "facedatavalidation"), 60, 70)
         self.face_test_imgs = load_all_data_in_file(os.path.join(face_data_path, "facedatatest"), 60, 70)
         self.face_train_labels = load_all_labels_in_file(os.path.join(face_data_path, "facedatatrainlabels"))

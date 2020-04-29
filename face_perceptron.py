@@ -118,7 +118,7 @@ if __name__ == '__main__':
     # digit_perceptron.cool_visualization(digit_data)
 
     "Extracting features..."
-    trainingData = map(featureFunction, face_data.face_train_images)
+    trainingData = map(featureFunction, face_data.face_train_imgs)
     validationData = map(featureFunction, face_data.face_validation_imgs)
     testData = map(featureFunction, face_data.face_test_imgs)
 

@@ -78,6 +78,17 @@ class FaceData:
                     features[(x, y)] = 0
         return features
 
+    def basic_feature2_extractor(self, datum):
+        """
+        Returns a set of pixel features indicating whether
+        each pixel in the provided datum is white (0) or gray/black (1)
+        """
+        features = utils.Counter()
+        for x in range(datum.width):
+            for y in range(datum.height):
+                features[(x, y)] = datum.get_pixel(x, y)
+        return features
+
 
 class Datum:
     """

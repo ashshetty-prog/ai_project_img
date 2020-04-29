@@ -1,48 +1,37 @@
-import utils
-from load_data import DigitData, Datum, FaceData
-from statistics import mode
-from multiprocessing import Pool
 import time
+from multiprocessing import Pool
+from statistics import mode
+
+from load_data import FaceData
+
 start_time = time.time()
+
 
 class KnnFaces:
     def __init__(self, k=5):
         self.face_data = FaceData("facedata")
         self.distance = []
         self.k = k
-        featureFunction = self.face_data.basic_feature2_extractor
-        self.trainingData = list(map(featureFunction, self.face_data.face_train_images))
-        self.testData = list(map(featureFunction, self.face_data.face_test_imgs))
+        feature_function = self.face_data.basic_feature2_extractor
+        self.trainingData = list(map(feature_function, self.face_data.face_train_images))
+        self.testData = list(map(feature_function, self.face_data.face_test_imgs))
 
     def predict(self, image):
-        img_a = utils.Counter()
-        img_b = utils.Counter()
         img_a = image
         self.distance = list(map(lambda x: (self.face_data.face_train_labels[x[0]], img_a.cosine_distance(x[1])),
                                  enumerate(self.trainingData)))
-        # self.distance = list(map(img_a.cosine_distance, self.trainingData))
-        # print('distance',self.distance)
-        # for i, train_image in enumerate(self.trainingData):
-        #    img_b = train_image
-        #    self.distance.append((self.face_data.face_train_labels[i], img_a.cosine_distance(img_b)))
-        # manhattan_distance(img_b)/(self.face_data.FACE_DATUM_WIDTH*self.face_data.FACE_DATUM_HEIGHT)
-        # sort the list of tuples by distances in increasing order
         sorted_dist = (sorted(self.distance, key=lambda x: x[1]))
         k_neighbors = sorted_dist[:self.k]
-        # print('k neighbors', k_neighbors)
         # select k labels
         klabels = [label for (label, _) in k_neighbors]
         # find the mode of the list
-        pred = mode(klabels)
-        # print('prediction', pred)
-        return pred
+        return mode(klabels)
 
 
 if __name__ == '__main__':
 
     knnf = KnnFaces(5)
     # test_features = knnd.get_features_for_data(knnd.digit_data.digit_test_imgs)
-    predictions = []
 
     # Run this with a pool of 5 agents having a chunksize of 3 until finished
     agents = 5
@@ -50,17 +39,10 @@ if __name__ == '__main__':
     with Pool(processes=agents) as pool:
         predictions = pool.map(knnf.predict, knnf.testData, chunksize)
     # cool_visualization(digit_data)
-    '''
-    predictions = list(map(knnf.predict, knnf.testData))
-    print('map output', predictions)
-
-    # for image in knnf.testData:
-        # predictions.append(list(map(knnf.predict, image)))
-    '''
 
     correct, wrong = (0, 0)
-    for k, pred in enumerate(predictions):
-        if pred == knnf.face_data.face_test_labels[k]:
+    for n, pred in enumerate(predictions):
+        if pred == knnf.face_data.face_test_labels[n]:
             correct += 1
         else:
             wrong += 1

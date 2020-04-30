@@ -54,3 +54,20 @@ def plot_line_graph(x, y, plot_title, x_label, y_label):
     plt.xlabel(x_label)
     plt.ylabel(y_label)
     plt.show()
+
+
+def cool_visualization(face_data):
+    """
+    I added this just to make sure that the loaded data is correct. But I ended up finding that if you stand far away
+    from the monitor, you can actually see the digit. VERY COOL :P
+
+    BTW, I do not recommend inverting the image. I'm just doing it for the visualization. Just get the datums
+    directly from DigitData.digit_train_imgs and work with them. I'd recommend checking out the Datum class as well.
+    :return:
+    """
+    for i, datum in enumerate(face_data.face_test_imgs):
+        inverted_datum = array_invert(datum.get_pixels())
+        for row in inverted_datum:
+            print(row)
+        if i > 4:
+            break

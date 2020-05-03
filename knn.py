@@ -1,11 +1,12 @@
+import time
+from multiprocessing import Pool
+from statistics import mode
+
 import numpy as np
 
 import p3_utils
 import utils
 from load_data import DigitData
-from statistics import mode
-from multiprocessing import Pool
-import time
 
 start_time = time.time()
 

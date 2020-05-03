@@ -5,6 +5,7 @@ import numpy as np
 import p3_utils
 from load_data import FaceData
 from perceptron import PerceptronClassifier
+import statistics
 
 if __name__ == '__main__':
     iterations = 3
@@ -50,3 +51,4 @@ if __name__ == '__main__':
                              "Percentage of training data used", "Percentage accuracy obtained on test data")
     p3_utils.plot_line_graph(range(10, 101, 10), runtimes, "Runtime of perceptron for face data",
                              "Percentage of training data used", "Runtime taken for trianing and testing")
+    print(statistics.stdev(percentages))

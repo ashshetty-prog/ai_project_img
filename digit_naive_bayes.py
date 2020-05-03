@@ -1,7 +1,7 @@
 import time
 
 import numpy as np
-
+import statistics
 import p3_utils
 from load_data import DigitData
 from naive_bayes import NaiveBayesPredictor
@@ -43,3 +43,5 @@ if __name__ == '__main__':
 
     p3_utils.plot_line_graph(range(10, 101, 10), time_list, "Naive Bayes Runtime chart for digits",
                              "Percentage of training data used", "Run time in seconds")
+
+    print(statistics.stdev(percentage_list))

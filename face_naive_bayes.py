@@ -5,6 +5,7 @@ import numpy as np
 import p3_utils
 from load_data import FaceData
 from naive_bayes import NaiveBayesPredictor
+import statistics
 
 if __name__ == '__main__':
     face_data = FaceData("facedata")
@@ -43,3 +44,4 @@ if __name__ == '__main__':
 
     p3_utils.plot_line_graph(range(10, 101, 10), time_list, "Naive Bayes Runtime chart for faces",
                              "Percentage of training data used", "Run time in seconds")
+    print(statistics.stdev(percentage_list))

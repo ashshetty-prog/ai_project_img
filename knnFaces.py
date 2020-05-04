@@ -2,10 +2,10 @@ import statistics
 import numpy as np
 import p3_utils
 import utils
-from load_data import FaceData
 from statistics import mode
 from multiprocessing import Pool
 import time
+from load_data import FaceData
 start_time = time.time()
 
 
@@ -15,9 +15,9 @@ class KnnFaces:
         self.distance = []
         self.k = k
         featureFunction = self.face_data.basic_feature_extractor
-        size = len(self.face_data.face_train_images)
+        size = len(self.face_data.face_train_imgs)
         index = int(size * i)
-        self.trainingData = list(map(featureFunction, self.face_data.face_train_images))[:index]
+        self.trainingData = list(map(featureFunction, self.face_data.face_train_imgs))[:index]
         self.testData = list(map(featureFunction, self.face_data.face_test_imgs))
 
     def predict(self, image):

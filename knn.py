@@ -1,5 +1,5 @@
+import statistics
 import numpy as np
-
 import p3_utils
 import utils
 from load_data import DigitData
@@ -69,3 +69,4 @@ if __name__ == '__main__':
                              "Percentage of training data used", "Accuracy obtained on test data")
     p3_utils.plot_line_graph(range(10, 101, 10), exec_time, "Knn Runtime chart for digits",
                              "Percentage of training data used", "Run time in seconds")
+    print(statistics.stdev(accuracy))

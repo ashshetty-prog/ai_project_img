@@ -1,9 +1,8 @@
+import statistics
 import time
 from multiprocessing import Pool
 from statistics import mode
-
 import numpy as np
-
 import p3_utils
 import utils
 from load_data import DigitData
@@ -63,10 +62,11 @@ if __name__ == '__main__':
         print("No. of correct guesses = {}".format(correct))
         print("No. of wrong guesses = {}".format(wrong))
         print("Percentage accuracy: {}".format((correct * 100) / (correct + wrong)))
-        accuracy.append(format((correct * 100) / (correct + wrong)))
+        accuracy.append((correct * 100) / (correct + wrong))
         print('execution time', time.time() - start_time)
         exec_time.append(time.time() - start_time)
     p3_utils.plot_line_graph(range(10, 101, 10), accuracy, "Knn Accuracy chart for digits",
                              "Percentage of training data used", "Accuracy obtained on test data")
     p3_utils.plot_line_graph(range(10, 101, 10), exec_time, "Knn Runtime chart for digits",
                              "Percentage of training data used", "Run time in seconds")
+    print(statistics.stdev(accuracy))

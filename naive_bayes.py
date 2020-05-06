@@ -1,5 +1,6 @@
 import p3_utils
 
+
 class NaiveBayesPredictor:
     def __init__(self, train_images, train_labels, all_labels):
         self.label_prob = {}

@@ -1,3 +1,4 @@
+import statistics
 import time
 
 import numpy as np
@@ -5,11 +6,10 @@ import numpy as np
 import p3_utils
 from load_data import FaceData
 from perceptron import PerceptronClassifier
-import statistics
 
 if __name__ == '__main__':
     iterations = 3
-    legalLabels = range(10)
+    legalLabels = range(2)
     face_data = FaceData("facedata")
 
     classifier = PerceptronClassifier(legalLabels, iterations)
@@ -20,7 +20,7 @@ if __name__ == '__main__':
     testDataList = list(map(featureFunction, face_data.face_test_imgs))
 
     n_train = len(trainingDataList)
-    classifier.set_weights(range(10), FaceData.FACE_DATUM_WIDTH, FaceData.FACE_DATUM_HEIGHT)
+    classifier.set_weights(range(2), FaceData.FACE_DATUM_WIDTH, FaceData.FACE_DATUM_HEIGHT)
     # Conduct training and testing
 
     percentages, runtimes = ([], [])
